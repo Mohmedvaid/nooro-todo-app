@@ -3,17 +3,27 @@
 import { useState } from "react";
 import { createTask, updateTask } from "@/app/lib/api";
 import { useRouter } from "next/navigation";
+import { TASK_COLORS } from "../constants/colors";
 
 type TaskFormProps = {
   task?: { id: number; title: string; color: string };
 };
 
+/**
+ * A form component for creating or editing a task.
+ * @param props - The props for the TaskForm component.
+ * @param props.task - The task object to edit (optional; if not provided, the form is in create mode).
+ */
 export default function TaskForm({ task }: TaskFormProps) {
   const [title, setTitle] = useState(task?.title || "");
   const [color, setColor] = useState(task?.color || "red");
   const router = useRouter();
 
-  async function handleSubmit(e: React.FormEvent) {
+  /**
+   * Handles form submission to create or update a task.
+   * @param e - The form submit event.
+   */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (task) {
       await updateTask(task.id, { title, color });
@@ -21,18 +31,7 @@ export default function TaskForm({ task }: TaskFormProps) {
       await createTask(title, color);
     }
     router.push("/");
-  }
-
-  const colors = [
-    { name: "red", value: "#FF0000" },
-    { name: "orange", value: "#FFA500" },
-    { name: "yellow", value: "#FFFF00" },
-    { name: "green", value: "#008000" },
-    { name: "blue", value: "#0000FF" },
-    { name: "purple", value: "#800080" },
-    { name: "pink", value: "#FFC0CB" },
-    { name: "brown", value: "#A52A2A" },
-  ];
+  };
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
@@ -49,7 +48,7 @@ export default function TaskForm({ task }: TaskFormProps) {
       <div className="flex flex-col gap-2">
         <label className="text-[var(--color-text)]">Color</label>
         <div className="flex gap-2">
-          {colors.map((c) => (
+          {TASK_COLORS.map((c) => (
             <button
               key={c.name}
               type="button"

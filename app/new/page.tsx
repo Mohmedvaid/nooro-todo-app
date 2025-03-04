@@ -3,6 +3,9 @@
 import TaskForm from "@/app/components/TaskForm";
 import { useRouter } from "next/navigation";
 
+/**
+ * Page for creating a new task.
+ */
 export default function NewTaskPage() {
   const router = useRouter();
 

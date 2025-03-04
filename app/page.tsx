@@ -6,19 +6,31 @@ import { Task } from "@/app/types/task";
 import TaskCard from "@/app/components/TaskCard";
 import { useRouter } from "next/navigation";
 
+/**
+ * Homepage displaying the list of tasks.
+ */
 export default function HomePage() {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
-    async function loadTasks() {
-      const fetchedTasks = await fetchTasks();
-      setTasks(fetchedTasks);
-    }
+    const loadTasks = async () => {
+      setLoading(true);
+      try {
+        const fetchedTasks = await fetchTasks();
+        setTasks(fetchedTasks);
+      } finally {
+        setLoading(false);
+      }
+    };
     loadTasks();
   }, []);
 
-  // Add a function to handle task deletion and update state
+  /**
+   * Handles task deletion by updating the local state.
+   * @param taskId - The ID of the task to delete.
+   */
   const handleDeleteTask = (taskId: number) => {
     setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
   };
@@ -27,8 +39,11 @@ export default function HomePage() {
 
   return (
     <div className="max-w-3xl mx-auto p-6">
-      <h1 className="text-4xl font-bold text-center mb-6 text-[var(--color-text)]">
-        <span className="text-[var(--color-primary)]">🚀 Todo</span> App
+      <h1 className="text-4xl font-bold text-center mb-6">
+        <span className="text-[var(--color-primary)]">🚀 </span>
+        <span className="bg-clip-text text-transparent bg-gradient-to-r from-[var(--color-primary)] to-[var(--color-accent)]">
+          Todo App
+        </span>
       </h1>
       <button
         className="w-full py-3 bg-[var(--color-primary)] text-white rounded-lg font-semibold flex items-center justify-center gap-2 hover:bg-opacity-80 transition"
@@ -37,36 +52,36 @@ export default function HomePage() {
         ➕ Create Task
       </button>
 
-      {/* Task Stats */}
       <div className="flex justify-between mt-6 text-sm text-[var(--color-secondary)]">
         <span>
           Tasks{" "}
-          <span className="bg-gray-700 px-2 py-1 rounded-full text-white">
+          <span className="bg-[#4A4A4A] px-2 py-1 rounded-full text-white">
             {tasks.length}
           </span>
         </span>
         <span>
           Completed{" "}
-          <span className="bg-gray-700 px-2 py-1 rounded-full text-white">
+          <span className="bg-[#4A4A4A] px-2 py-1 rounded-full text-white">
             {completedTasks} de {tasks.length}
           </span>
         </span>
       </div>
 
-      {/* Task List */}
       <div className="space-y-4 mt-4">
-        {tasks.length > 0 ? (
+        {loading ? (
+          <p className="text-center text-[var(--color-secondary)]">
+            Loading...
+          </p>
+        ) : tasks.length > 0 ? (
           tasks.map((task) => (
-            <TaskCard
-              key={task.id}
-              task={task}
-              onDelete={handleDeleteTask} // Pass the callback to TaskCard
-            />
+            <TaskCard key={task.id} task={task} onDelete={handleDeleteTask} />
           ))
         ) : (
-          <p className="text-center text-[var(--color-secondary)]">
-            No tasks yet.
-          </p>
+          <div className="text-center text-[var(--color-secondary)]">
+            <div className="text-4xl mb-2">📋</div>
+            <p>You don’t have any tasks registered yet.</p>
+            <p>Create tasks and organize your to-do items.</p>
+          </div>
         )}
       </div>
     </div>

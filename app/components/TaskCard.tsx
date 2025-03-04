@@ -4,48 +4,49 @@ import { Task } from "@/app/types/task";
 import { updateTask, deleteTask } from "@/app/lib/api";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { COLOR_MAP, DEFAULT_COLOR } from "../constants/colors";
 
 type TaskCardProps = {
   task: Task;
   onDelete: (taskId: number) => void;
 };
 
+/**
+ * A card component representing a single task with toggle, edit, and delete functionality.
+ * @param props - The props for the TaskCard component.
+ * @param props.task - The task object to display.
+ * @param props.onDelete - Callback function to handle task deletion in the parent component.
+ */
 export default function TaskCard({ task, onDelete }: TaskCardProps) {
   const router = useRouter();
   const [completed, setCompleted] = useState(task.completed);
 
-  async function toggleComplete() {
+  const taskColor = COLOR_MAP[task.color] || DEFAULT_COLOR;
+
+  /**
+   * Toggles the completion status of the task.
+   */
+  const toggleComplete = async () => {
     await updateTask(task.id, { completed: !completed });
     setCompleted(!completed);
-  }
+  };
 
-  async function handleDelete() {
+  /**
+   * Handles the deletion of the task with a confirmation prompt.
+   */
+  const handleDelete = async () => {
     if (confirm("Are you sure you want to delete this task?")) {
       await deleteTask(task.id);
       onDelete(task.id);
     }
-  }
+  };
 
+  /**
+   * Navigates to the edit page for the task.
+   */
   const handleEdit = () => {
     router.push(`/edit/${task.id}`);
   };
-
-  // Map the task color to a CSS color value
-  const colorMap: { [key: string]: string } = {
-    red: "#FF0000",
-    orange: "#FFA500",
-    yellow: "#FFFF00",
-    green: "#008000",
-    blue: "#0000FF",
-    purple: "#800080",
-    pink: "#FFC0CB",
-    brown: "#A52A2A",
-    primary: "var(--color-primary)",
-    secondary: "var(--color-secondary)",
-    accent: "var(--color-accent)",
-  };
-
-  const taskColor = colorMap[task.color] || "var(--color-primary)";
 
   return (
     <div
