@@ -1,15 +1,17 @@
 "use client";
 
-import { Task } from "../types/task";
-import { updateTask, deleteTask } from "../lib/api";
+import { Task } from "@/app/types/task";
+import { updateTask, deleteTask } from "@/app/lib/api";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export default function TaskCard({ task }: { task: Task }) {
   const router = useRouter();
+  const [completed, setCompleted] = useState(task.completed);
 
   async function toggleComplete() {
-    await updateTask(task.id, { completed: !task.completed });
-    router.refresh(); // Refresh UI after update
+    await updateTask(task.id, { completed: !completed });
+    setCompleted(!completed);
   }
 
   async function handleDelete() {
@@ -21,27 +23,31 @@ export default function TaskCard({ task }: { task: Task }) {
 
   return (
     <div
-      className={`p-4 border-l-4 rounded-lg bg-white shadow-sm border-${task.color}-500`}
+      className={`p-4 rounded-lg shadow-sm bg-[var(--color-task-bg)] border border-[var(--color-border)] flex justify-between items-center ${
+        completed ? "opacity-50" : ""
+      }`}
     >
-      <div className="flex justify-between">
-        <h3 className="text-lg">{task.title}</h3>
+      <label className="flex items-center gap-3 cursor-pointer">
         <input
           type="checkbox"
-          checked={task.completed}
+          checked={completed}
           onChange={toggleComplete}
+          className="appearance-none w-5 h-5 border border-[var(--color-secondary)] rounded-full checked:bg-[var(--color-accent)] checked:border-none"
         />
-      </div>
-      <div className="flex justify-end gap-2 mt-2">
-        <button
-          className="text-blue-500"
-          onClick={() => router.push(`/edit/${task.id}`)}
+        <span
+          className={`text-[var(--color-text)] ${
+            completed ? "line-through text-[var(--color-secondary)]" : ""
+          }`}
         >
-          Edit
-        </button>
-        <button className="text-red-500" onClick={handleDelete}>
-          Delete
-        </button>
-      </div>
+          {task.title}
+        </span>
+      </label>
+      <button
+        onClick={handleDelete}
+        className="text-gray-400 hover:text-red-500 transition"
+      >
+        🗑️
+      </button>
     </div>
   );
 }
