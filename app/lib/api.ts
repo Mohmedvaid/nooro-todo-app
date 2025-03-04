@@ -1,28 +1,55 @@
-const API_URL = "http://localhost:3000/tasks"; // Update this when deploying
+const API_URL = "http://localhost:3000/tasks"; // Ensure backend URL is correct
 
 export async function fetchTasks() {
-  const res = await fetch(API_URL);
-  return res.json();
+  try {
+    const res = await fetch(API_URL);
+    if (!res.ok) throw new Error(`Error ${res.status}: Failed to fetch tasks`);
+    return await res.json();
+  } catch (error) {
+    console.error("Fetch Tasks Error:", error);
+    return [];
+  }
 }
 
 export async function createTask(title: string, color: string) {
-  const res = await fetch(API_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ title, color }),
-  });
-  return res.json();
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ title, color }),
+    });
+    if (!res.ok) throw new Error(`Error ${res.status}: Failed to create task`);
+    return await res.json();
+  } catch (error) {
+    console.error("Create Task Error:", error);
+    throw error;
+  }
 }
 
 export async function updateTask(id: number, updates: any) {
-  const res = await fetch(`${API_URL}/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(updates),
-  });
-  return res.json();
+  try {
+    const res = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updates),
+    });
+
+    if (!res.ok) throw new Error(`Error ${res.status}: Failed to update task`);
+    return await res.json();
+  } catch (error) {
+    console.error("Update Task Error:", error);
+    throw error;
+  }
 }
 
 export async function deleteTask(id: number) {
-  await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+  try {
+    const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+
+    if (!res.ok) throw new Error(`Error ${res.status}: Failed to delete task`);
+    return await res.json();
+  } catch (error) {
+    console.error("Delete Task Error:", error);
+    throw error;
+  }
 }

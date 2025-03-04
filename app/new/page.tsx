@@ -1,11 +1,24 @@
+"use client";
+
 import TaskForm from "@/app/components/TaskForm";
+import { useRouter } from "next/navigation";
 
 export default function NewTaskPage() {
+  const router = useRouter();
+
   return (
     <div className="max-w-md mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4 text-[var(--color-text)]">
-        Create New Task
-      </h1>
+      <div className="flex items-center gap-4 mb-4">
+        <button
+          onClick={() => router.push("/")}
+          className="text-[var(--color-text)]"
+        >
+          ←
+        </button>
+        <h1 className="text-2xl font-bold text-[var(--color-text)]">
+          Create New Task
+        </h1>
+      </div>
       <TaskForm />
     </div>
   );

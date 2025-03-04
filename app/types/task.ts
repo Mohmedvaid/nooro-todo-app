@@ -1,7 +1,6 @@
-export interface Task {
+export type Task = {
   id: number;
   title: string;
-  color: string;
+  color: string; // e.g., "red", "blue", "purple", etc.
   completed: boolean;
-  createdAt: string;
-}
+};

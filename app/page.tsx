@@ -18,6 +18,11 @@ export default function HomePage() {
     loadTasks();
   }, []);
 
+  // Add a function to handle task deletion and update state
+  const handleDeleteTask = (taskId: number) => {
+    setTasks((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+  };
+
   const completedTasks = tasks.filter((task) => task.completed).length;
 
   return (
@@ -51,7 +56,13 @@ export default function HomePage() {
       {/* Task List */}
       <div className="space-y-4 mt-4">
         {tasks.length > 0 ? (
-          tasks.map((task) => <TaskCard key={task.id} task={task} />)
+          tasks.map((task) => (
+            <TaskCard
+              key={task.id}
+              task={task}
+              onDelete={handleDeleteTask} // Pass the callback to TaskCard
+            />
+          ))
         ) : (
           <p className="text-center text-[var(--color-secondary)]">
             No tasks yet.
